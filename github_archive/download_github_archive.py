@@ -96,7 +96,7 @@ def update_starting_ending_point(start_timestamp, end_timestamp):
 
 if __name__ == "__main__":
     start_time_str, end_time_str = get_start_and_end_point(START_END_FILE)
-    start_timestamp = download_backward_files(start_time_str, 2000)
+    start_timestamp = download_backward_files(start_time_str, 800)
     end_timestamp = datetime.datetime.strptime(end_time_str, '%Y-%m-%d %H:%M:%S.%f')
     update_starting_ending_point(start_timestamp, end_timestamp)
 
