@@ -1,4 +1,4 @@
-cd /media/quynh/DATA/Courses/DII/github\ data
+cd ~/git/githubarchive.org/crawler/data/
 
 # Move the first 10 files to different folder
 ls | head -10 | while read file; do mv $file "./processing/$file"; done
