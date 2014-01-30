@@ -2,3 +2,17 @@ CREATE EXTERNAL TABLE  github_events_hive (rowkey STRING,actor_login STRING,acto
 STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
 WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key,actor:login,actor:name,repository:id,repository:name,repository:url,repository:watchers,repository:stargazers,repository:forks,repository:language,created_at:year,created_at:month,created_at:day,created_at:weekday,created_at:hour,created_at:timestamp,event:type') 
 TBLPROPERTIES ('hbase.table.name' = 'github_events'); 
+
+
+//----------- group by created_at_hour-------------------
+select actor_login , created_at_hour , count(*) from github_events_hive group by actor_login, created_at_hour;
+
+//----------- group by created_at_weekday-------------------
+select actor_login , created_at_weekday , count(*) from github_events_hive group by actor_login, created_at_weekday;
+
+//----------- group by repository_language-------------------
+select actor_login , repository_name , count(*) from github_events_hive group by actor_login, repository_name;
+
+//----------- group by repository_language------------------
+select actor_login , repository_language , count(*) from github_events_hive group by actor_login, repository_language;
+
