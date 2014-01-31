@@ -3,7 +3,8 @@ create 'github_events', 'actor', 'repository', 'created_at', 'event'
 
 // import to hbase
 python importFromJsonFile.py /home/kidio/assignments/DII/data-information-integration/duyvk/importFromJsonFile/data
-
+or
+zcat data_gzip/*.gz | python importFromGzipFile.py             // so much faster than gzip open
 
 
 // hive command
