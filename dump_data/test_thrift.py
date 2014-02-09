@@ -81,7 +81,6 @@ if __name__ == '__main__':
 
             # Add data to 'column families' type
             event_type = event['type']
-
             if event_type not in ['CommitCommentEvent',
                 'IssueCommentEvent',
                 'IssuesEvent',
@@ -92,8 +91,15 @@ if __name__ == '__main__':
                 'ForkApplyEvent']:
                 continue
 
+            event_message = ""
+            if event_type == "PushEvent":
+                payload = event['payload']
+                shas = payload['shas']
+                if shas is not None and len(shas)> 0:
+                    event_message = shas[0][2]
+
             # Add data to 'column families' created_at
-            print event[-6:]
+            # print event[-6:]
             temp = event['created_at'][:-6] # remove 5 character at the end of string
             created_at = datetime.datetime.strptime(temp,
                 "%Y-%m-%dT%H:%M:%S")
@@ -112,10 +118,11 @@ if __name__ == '__main__':
                 Hbase.Mutation(column='created_at:year', value=str(created_at.year)),
                 Hbase.Mutation(column='created_at:month', value=str(created_at.month)),
                 Hbase.Mutation(column='created_at:day', value=str(created_at.day)),
-                Hbase.Mutation(column='created_at:weekday', value=str(created_at.weekday())),
                 Hbase.Mutation(column='created_at:hour', value=str(created_at.hour)),
+                Hbase.Mutation(column='created_at:weekday', value=str(created_at.weekday())),
                 Hbase.Mutation(column='created_at:timestamp', value=temp),
                 Hbase.Mutation(column='event:type', value=str(event_type)),
+                Hbase.Mutation(column='event:message', value=str(event_message)),
                 Hbase.Mutation(column='actor:login', value=actor['login']),
                 Hbase.Mutation(column='actor:name', value=actor.get('name', '')),
                 Hbase.Mutation(column='repository:id', value=str(repo['id'])),
