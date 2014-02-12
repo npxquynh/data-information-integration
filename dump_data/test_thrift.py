@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import sys
+import time
 import pdb
 
 from thrift.transport import TSocket
@@ -37,6 +38,8 @@ class ThriftHbase:
             self.transport.open()
 
 if __name__ == '__main__':
+    starting_time = time.time()
+
     th = ThriftHbase()
 
     # Test whether a table exists
@@ -61,20 +64,13 @@ if __name__ == '__main__':
     # parse JSON
     # line = '{"created_at":"2013-09-20T10:00:06-07:00","payload":{"pages":[{"page_name":"Home","title":"Home","summary":null,"action":"created","sha":"fbc868e990ef516a0be2a5c87b17228a75eb655f","html_url":"https://github.com/iSamuraii/FFReader/wiki/Home"}]},"public":true,"type":"GollumEvent","url":"https://github.com/iSamuraii/FFReader/wiki/Home","actor":"iSamuraii","actor_attributes":{"login":"iSamuraii","type":"User","gravatar_id":"65fbae24a4f3ba884f52bff624b62985"},"repository":{"id":12917102,"name":"FFReader","url":"https://github.com/iSamuraii/FFReader","description":"An API based reader for Forumfree","watchers":0,"stargazers":0,"forks":0,"fork":false,"size":268,"owner":"iSamuraii","private":false,"open_issues":0,"has_issues":true,"has_downloads":true,"has_wiki":true,"language":"PHP","created_at":"2013-09-18T00:44:20-07:00","pushed_at":"2013-09-20T09:59:14-07:00","master_branch":"master"}}'
     for line in sys.stdin:
-    # pdb.set_trace()
         line = line.decode('ascii', 'ignore')
-        # encoding = chardet.detect(line)
-        # print encoding['encoding']
-        # if encoding['encoding'] != 'ascii':
-        #     pass
-        #     # continue
 
         try:
             event = json.loads(line)
         except:
             logging.warn("Failed parsing json on line")
             continue
-            # pass
 
         try:
             mutations = []
@@ -99,7 +95,6 @@ if __name__ == '__main__':
                     event_message = shas[0][2]
 
             # Add data to 'column families' created_at
-            # print event[-6:]
             temp = event['created_at'][:-6] # remove 5 character at the end of string
             created_at = datetime.datetime.strptime(temp,
                 "%Y-%m-%dT%H:%M:%S")
@@ -111,8 +106,7 @@ if __name__ == '__main__':
             repo = event['repository']
 
             # Define rowkey
-            # pdb.set_trace()
-            rowkey = "%d%d%d_%s" % (created_at.year, created_at.month, created_at.day, actor['login'])
+            rowkey = "%s_%s" % (event['created_at'], actor['login'])
 
             mutations = [
                 Hbase.Mutation(column='created_at:year', value=str(created_at.year)),
@@ -127,6 +121,7 @@ if __name__ == '__main__':
                 Hbase.Mutation(column='actor:name', value=actor.get('name', '')),
                 Hbase.Mutation(column='repository:id', value=str(repo['id'])),
                 Hbase.Mutation(column='repository:name', value=str(repo.get('name',''))),
+                Hbase.Mutation(column='repository:owner', value=repo['owner']),
                 Hbase.Mutation(column='repository:url', value=repo['url']),
                 Hbase.Mutation(column='repository:watchers', value=str(repo['watchers'])),
                 Hbase.Mutation(column='repository:stargazers', value=str(repo['stargazers'])),
@@ -137,6 +132,8 @@ if __name__ == '__main__':
             th.reconnect()
             th.client.mutateRow(DEFAULT_TABLE_NAME, rowkey, mutations, {})
         except KeyError as e:
-            # pdb.set_trace()
-            logging.warn("Key not found: %s for event type: %s" % (e, event.get('type', '')))
+            continue
+            # logging.warn("Key not found: %s for event type: %s" % (e, event.get('type', '')))
 
+    processing_time = time.time() - starting_time
+    print "Total running time: %f" % processing_time
