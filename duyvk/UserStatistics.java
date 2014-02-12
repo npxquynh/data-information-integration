@@ -34,7 +34,14 @@ public class UserStatistics {
 		
 		// query in hive
 		String query = (String.format(USER_GROUPBY_QUERY, table, field));
+		
+		long ls = new Date().getTime();
 		ResultSet res = stmt.executeQuery(query);
+		long le = new Date().getTime();
+		System.out.println("\tTime: query for "+field+": "+ (le-ls)/1000 + " s");
+		
+		
+		long ls2 = new Date().getTime();
 		while (res.next()){
 			user = res.getString("user");
 			fieldValue = res.getString(field);
@@ -42,6 +49,9 @@ public class UserStatistics {
 			// put data to mongodb
 			updateToMongo(coll, user, field, fieldValue, value);
 		}
+		
+		long le2 = new Date().getTime();
+		System.out.println("\tTime: update mongo for "+field+": "+ (le2-ls2)/1000 + " s");
 	}
 	
 	public static void updateToMongo(DBCollection coll, String user,String field, String fieldValue, int value){
@@ -94,25 +104,26 @@ public class UserStatistics {
 		}
 		
 		// mongodb db
-		DB db = mongo.getDB("github_user");
+		DB db = mongo.getDB("github_users");
 				
 		// get mongodb collection
-		DBCollection coll = db.getCollection("user");
+		DBCollection coll = db.getCollection("users");
 		
 		// set unique index for user.
 		coll.ensureIndex(new BasicDBObject("user", 1), new BasicDBObject("unique", true));
 		
-		String[] fields = {"created_at_hour", "created_at_weekday", "repository_language", "repository_name", "event_type"};
+		String[] fields = {"created_at_hour", "created_at_weekday", "repository_language", "repository_id", "event_type"};
 		
 		// put data to mongodb
 		for (String field : fields){
 			System.out.println("Start update : "+ field);
 			updateStatistics(stmt, coll, EVENT_TABLE, field);
 			System.out.println("Stop update: "+ field);
+			System.out.println("-----------");
 		}
 		con.close();
 		
 		long le = new Date().getTime();
-		System.out.println("time: "+ (ls-le)/1000);
+		System.out.println("time: "+ (le-ls)/1000 + " s");
 	}
 }
