@@ -10,7 +10,7 @@ from thrift.protocol import TBinaryProtocol
 from thrift.transport import TTransport
 from hbase import Hbase
 
-DEFAULT_TABLE_NAME = 'github_events'
+DEFAULT_TABLE_NAME = 'git_events'
 DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 9090
 

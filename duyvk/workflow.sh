@@ -14,6 +14,12 @@ STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
 WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key,actor:login,actor:name,repository:id,repository:name,repository:url,repository:watchers,repository:stargazers,repository:forks,repository:language,created_at:year,created_at:month,created_at:day,created_at:weekday,created_at:hour,created_at:timestamp,event:type,event:message') 
 TBLPROPERTIES ('hbase.table.name' = 'github_events'); 
 
+CREATE EXTERNAL TABLE lang_emotion_hive (rowkey STRING,anger INT,joy INT, amusement INT, surprise INT, swear INT, issue INT)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key#b,emotion:anger#b,emotion:joy#b,emotion:amusement#b,emotion:surprise#b,emotion:swear#b,emotion:issue#b')
+TBLPROPERTIES ('hbase.table.name' = 'lang_emotion'); 
+
+
 
 // query
 
@@ -28,3 +34,5 @@ select actor_login , repository_name , count(*) from github_events_hive group by
 
 //----------- group by repository_language------------------
 select actor_login , repository_language , count(*) from github_events_hive group by actor_login, repository_language;
+
+
