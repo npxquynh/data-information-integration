@@ -1,0 +1,38 @@
+The report has to be written in Latex or word
+(but you need to deliver to me by mail only the pdf)
+and the format to follow should be the one described here:
+http://www.acm.org/sigs/publications/proceedings-templates
+
+You are not allowed to change fonts, font sizes  or spaces
+
+The length of the report, expect it to be round 6 pages.
+
+Do not put large images (just to occupy space). It is visible when you do so
+and counts negative. Also do not write things just to fill up the space.
+
+
+The content should be composed of the following sections:
+
+1. Introduction
+2. Related work
+        Describe what other related (similar) software components or systems you have found and what are the related areas that you consider and how
+        you borrow from them. Accompany this with references
+3. Problem statement.
+        Explain formally what the problem that you try to solve is.
+4. Solution
+        Write the solution to the problem that you described in 3. Do write pseudo code if you need to describe an algorithm.
+        DONOT include java, C, Ruby, etc or any other language specific code.  This is very negative to have in the report.
+        Also in this section include the formulas that you may have
+
+        As a subsection you can have one called Implementation in which you describe how you actually implemented the idea/solution
+        you just described. For instance here you can say what technologies you used (e.g. what language, the architecture of your system, etc).
+5. Experiments
+        Here you report how you made you system run on a number of data sets. Remember that you have to study how well your system
+        performs as the data starts growing up and the performance will be getting down.
+
+
+(PS: I understand that some of the projects may have variations to this standard format, but try to stay close to this structure as much as you can.)
+
+PS2: what report you have sent me already (those of you  that you did) on the 7th of January is basically part of section 4 above.
+
+PS3: As before, inform the other members of your team in case they are among those that have not provided me their emails.
